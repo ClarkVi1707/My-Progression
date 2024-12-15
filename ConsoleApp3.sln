@@ -1,25 +1,111 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.11.35327.3
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp3", "ConsoleApp3\ConsoleApp3.csproj", "{7113BC39-EFEC-436B-B8CD-1277FA0A2678}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7113BC39-EFEC-436B-B8CD-1277FA0A2678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7113BC39-EFEC-436B-B8CD-1277FA0A2678}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7113BC39-EFEC-436B-B8CD-1277FA0A2678}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7113BC39-EFEC-436B-B8CD-1277FA0A2678}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {CA2D49EE-A86D-4B3B-B669-32E875BDB993}
-	EndGlobalSection
-EndGlobal
+
+using System;
+
+class Program
+{
+    public static void Main(string[] args)
+    {
+        string op;
+
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("MENU\n");
+            Console.WriteLine("Selecione uma opção:");
+            Console.WriteLine("1 - Soma");
+            Console.WriteLine("2 - Subtração");
+            Console.WriteLine("3 - Divisão");
+            Console.WriteLine("4 - Multiplicação");
+            Console.WriteLine("s - Sair");
+            Console.Write("\nOpção: ");
+            op = Console.ReadLine()?.ToLower();
+
+            switch (op)
+            {
+                case "1":
+                    ExecuteOperation(Soma);
+                    break;
+
+                case "2":
+                    ExecuteOperation(Subtracao);
+                    break;
+
+                case "3":
+                    ExecuteOperation(Divisao);
+                    break;
+
+                case "4":
+                    ExecuteOperation(Multiplicacao);
+                    break;
+
+                case "s":
+                    Console.WriteLine("\nEncerrando o programa...");
+                    break;
+
+                default:
+                    Console.WriteLine("\nA opção selecionada é inválida.");
+                    break;
+            }
+
+            if (op != "s") PauseForUser();
+
+        } while (op != "s");
+
+        Console.WriteLine("\nFim!");
+    }
+
+    static (int, int)? GetNumbers()
+    {
+        try
+        {
+            Console.Write("Digite o primeiro número: ");
+            int n1 = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+
+            Console.Write("Digite o segundo número: ");
+            int n2 = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+
+            return (n1, n2);
+        }
+        catch
+        {
+            Console.WriteLine("Entrada inválida. Tente novamente.");
+            return null;
+        }
+    }
+
+    static void ExecuteOperation(Func<int, int, int> operation)
+    {
+        var numbers = GetNumbers();
+        if (numbers == null) return;
+
+        var (n1, n2) = numbers.Value;
+        try
+        {
+            int result = operation(n1, n2);
+            Console.WriteLine($"\nResultado: {result}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"\nErro: {ex.Message}");
+        }
+    }
+
+    static int Soma(int n1, int n2) => n1 + n2;
+
+    static int Subtracao(int n1, int n2) => n1 - n2;
+
+    static int Divisao(int n1, int n2)
+    {
+        if (n2 == 0)
+            throw new DivideByZeroException("Divisão por zero não é permitida.");
+        return n1 / n2;
+    }
+
+    static int Multiplicacao(int n1, int n2) => n1 * n2;
+
+    static void PauseForUser()
+    {
+        Console.WriteLine("\nPressione qualquer tecla para continuar...");
+        Console.ReadKey();
+    }
+}
